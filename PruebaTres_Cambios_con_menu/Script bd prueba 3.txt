@@ -1,0 +1,68 @@
+DROP DATABASE IF EXISTS bdtraumed;
+CREATE DATABASE bdtraumed;
+USE bdtraumed;
+
+CREATE TABLE tb_tipo_producto(
+    id_tipo INT PRIMARY KEY AUTO_INCREMENT, 
+    nombre_tipo VARCHAR(50) NOT NULL 
+);
+
+
+-- Contiene SOLO los datos comunes a todos los productos.
+CREATE TABLE tb_producto(
+    id_producto INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    material VARCHAR(50) NOT NULL,    
+    marca VARCHAR(50) NOT NULL,	
+    precio INT (6) NOT NULL,
+    stock INT (6) NOT NULL,	 	       
+    id_tipo INT, 
+    
+    CONSTRAINT fk_prod_tipo FOREIGN KEY (id_tipo) 
+        REFERENCES tb_tipo_producto(id_tipo)
+);
+
+
+CREATE TABLE tb_placa(
+    id_placa INT PRIMARY KEY AUTO_INCREMENT,
+    id_producto INT NOT NULL UNIQUE,  
+    medida DECIMAL(3,1) NOT NULL,    
+    cantidad_agujeros INT (6) NOT NULL,
+    
+    CONSTRAINT fk_placa_prod FOREIGN KEY (id_producto) 
+        REFERENCES tb_producto(id_producto) 
+        ON DELETE CASCADE             
+);
+
+
+CREATE TABLE tb_tornillo(
+    id_tornillo INT PRIMARY KEY AUTO_INCREMENT,
+    id_producto INT NOT NULL UNIQUE,  
+    diametro DECIMAL(3,1) NOT NULL,  
+    largo DECIMAL(3,1) NOT NULL,
+    tipo_cabeza VARCHAR(50) NOT NULL, 
+    
+    CONSTRAINT fk_tornillo_prod FOREIGN KEY (id_producto) 
+        REFERENCES tb_producto(id_producto) 
+        ON DELETE CASCADE             
+);
+-- Insert de tipo_producto que es obligatorio.
+INSERT INTO tb_tipo_producto (nombre_tipo) VALUES ('Placa');  
+INSERT INTO tb_tipo_producto (nombre_tipo) VALUES ('Tornillo'); 
+
+INSERT INTO tb_producto(nombre, material, marca, precio, stock, id_tipo) VALUES('Placa 2.7', 'dcp', 'traumed', 1600, 20, 1);
+INSERT INTO tb_placa(id_producto, medida, cantidad_agujeros) VALUES(LAST_INSERT_ID(), 2.7, 12);
+
+
+
+INSERT INTO tb_producto(nombre, material, marca, precio, stock, id_tipo) VALUES('Placa 3.5', 'lcp', 'bluesao', 2000, 10, 1);
+INSERT INTO tb_placa(id_producto, medida, cantidad_agujeros) VALUES(LAST_INSERT_ID(), 3.5, 14);
+
+
+
+INSERT INTO tb_producto(nombre, material, marca, precio, stock, id_tipo) VALUES('Tornillo 3.0', 'dcp', 'traumed', 1600, 60, 2);
+INSERT INTO tb_tornillo(id_producto, diametro, largo, tipo_cabeza) VALUES(LAST_INSERT_ID(), 3.0, 14, 'Estrella');
+
+
+INSERT INTO tb_producto(nombre, material, marca, precio, stock, id_tipo) VALUES('Tornillo 2.7', 'lcp', 'bluesao', 1600, 40, 2);
+INSERT INTO tb_tornillo(id_producto, diametro, largo, tipo_cabeza) VALUES(LAST_INSERT_ID(), 2.7, 12, 'Hexagonal');
